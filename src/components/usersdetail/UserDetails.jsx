@@ -1,56 +1,55 @@
+
 import { Form, useLoaderData } from "react-router";
 import { readDb } from "../../utils/readDb";
 
 export async function Loader({ params }) {
-  const user = await readDb(params.contacts);
-  console.log(user);
-  return { user };
- 
-  
+  // Fetch all contacts and find the one with the matching id
+  const db = await readDb();
+  const contact = db.contacts.find(c => String(c.id) === String(params.contactId));
+  return { contact };
 }
 
 
-export default function UserDetails() {
-  const { users } = useLoaderData();
 
-console.log();
+export default function UserDetails() {
+  const { contact } = useLoaderData();
+
 
   return (
-    <div id="users">
+    <div id="contact">
       <div>
         <img
-          key={users.id}
+          key={contact.id}
           src={
-            users.profilePic ||
-            `https://robohash.org/${users.id}.png?size=200x200`
+            contact.profilePic
           }
         />
       </div>
 
       <div>
         <h1>
-          {users.first || users.last ? (
+          {contact.id ? (
             <>
-              {users.first} {users.last}
+              {contact.name}
             </>
           ) : (
             <i>No Name</i>
           )}{" "}
-          <Favorite users={users} />
+          <Favorite contact={contact} />
         </h1>
 
-        {users.twitter && (
+        {contact.twitter && (
           <p>
             <a
               target="_blank"
-              href={`https://twitter.com/${users.twitter}`}
+              href={`https://twitter.com/${contact.twitter}`}
             >
-              {users.twitter}
+              {contact.twitter}
             </a>
           </p>
         )}
 
-        {users.notes && <p>{users.notes}</p>}
+        {contact.notes && <p>{contact.notes}</p>}
 
         <div>
           <Form action="edit">
@@ -77,8 +76,8 @@ console.log();
   );
 }
 
-function Favorite({ users }) {
-  const favorite = users.favorite;
+function Favorite({ contact }) {
+  const favorite = contact.favorite;
   return (
     <Form method="post">
       <button
