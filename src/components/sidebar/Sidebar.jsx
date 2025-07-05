@@ -1,6 +1,34 @@
-import { Form, Link, Outlet, useLoaderData } from "react-router";
+import { Form, NavLink, Outlet, useLoaderData, useNavigation, useSubmit } from "react-router";
+import { readDb } from "../../utils/readDb";
+import { useEffect } from "react";
+
+export async function LoaderSearch({ request }) {
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
+  const users = await readDb(q);
+  return { users, q };
+}
+
+
 function Sidebar() {
-  const { users } = useLoaderData();
+  const { users, q } = useLoaderData();
+  const navigation = useNavigation();
+   const submit = useSubmit();
+  //  const {data, error, loading} = useAsync(()=> readDb(), []);
+
+// if(loading && <div className="text-center">Loading Your Data</div>);
+// if(error && <div className="text-center">Error to fetch data</div>);
+// if(data && data.map((dat)=> <span key={dat.id} className="my-1" >{dat.name}</span>));
+
+   const searching =
+    navigation.location &&
+    new URLSearchParams(navigation.location.search).has(
+      "q"
+    );
+
+  useEffect(() => {
+    document.getElementById("q").value = q;
+  }, [q]);
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-400 via-blue-600 to-blue-400">
       {/* Sidebar */}
@@ -36,9 +64,16 @@ function Sidebar() {
             aria-label="Search contacts"
             placeholder="Search..."
             type="search"
+            
             name="q"
-            className="flex-1 bg-transparent outline-none text-white placeholder-white/70 text-base"
+            defaultValue={q}
+             onChange={(event) => {
+                submit(event.currentTarget.form);
+              }}
+            className={`${searching ? "loading" : ""} flex-1 bg-transparent outline-none text-white placeholder-white/70 text-base`}
           />
+            <div id="search-spinner" aria-hidden hidden={!searching}/>
+  <div className="sr-only" aria-live="polite"></div>
           <button
             type="submit"
             className="text-white hover:text-blue-300 transition"
@@ -79,10 +114,15 @@ function Sidebar() {
             <ul className="space-y-2">
               {users.map((user) => (
                 <li key={user.id}>
-                  <Link
+                  <NavLink
                     to={`users/${user.id}`}
-                    className="flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-red-500 transition font-medium"
-                  >
+                    className={({ isActive, isPending }) =>
+                      isActive
+                        ? "active flex items-center gap-3 px-4 py-2 rounded-lg text-blue-600 bg-gray-50 transition font-medium"
+                        : isPending
+                          ? "pending"
+                          : "flex items-center gap-3 px-4 py-2 rounded-lg text-white hover:bg-red-500 transition font-medium"
+                    }>
                     <img
                       src={
                         user.profilePic ||
@@ -95,7 +135,7 @@ function Sidebar() {
                     {user.favorite && (
                       <span className="ml-1 text-yellow-300">★</span>
                     )}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -111,8 +151,13 @@ function Sidebar() {
       </aside>
       {/* Main Content */}
       <main className="flex-1 p-8 ml-72">
-        {/* ALL CHILDS RENDER HERE */}
-        <Outlet />
+        <div className={
+          navigation.state === "loading" ? "loading opacity-5" : ""
+        }>
+          {/* ALL CHILDS RENDER HERE */}
+          <Outlet />
+        </div>
+
       </main>
     </div>
   );

@@ -5,7 +5,14 @@ export async function readDb() {
   return response.json();
 }
 
+export async function createContact({request, params}){
+    
+}
 
-export async function createContact(){
+export async function updateContact({request, params}){
+    
+}
+
+export async function deleteContact({params}){
     
 }
