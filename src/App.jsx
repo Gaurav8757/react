@@ -25,13 +25,13 @@ function App() {
           action: ActionFavourites,
         },
         {
-          path: "contacts/:contactId/edit",
+          path: "users/:contactId/edit",
           element: <UserDetails />,
           loader: UserLoader,
           action: ActionUpdate,
         },
         {
-          path: "contacts/:contactId/destroy",
+          path: "users/:contactId/destroy",
           action: ActionDelete,
           errorElement: <div>Oops! There was an error.</div>,
         },
