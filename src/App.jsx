@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import ErrorPage from "./components/errorspage/ErrorPage.jsx";
 import Sidebar from "./components/sidebar/Sidebar.jsx";
 // own loader to fetch data
-import UserDetails, { Loader as UserLoader, ActionUpdate, ActionDelete, ActionFavourites} from "./components/usersdetail/UserDetails.jsx";
+import UserDetails, { Loader as UserLoader, ActionUpdate, ActionDelete, ActionFavourites } from "./components/usersdetail/UserDetails.jsx";
 // get/post data from loader and action
 import Loader, { Action } from "./components/loaderdata/Loader.jsx";
 import Index from "./components/index/Index.jsx";
@@ -17,24 +17,24 @@ function App() {
       loader: Loader,   // use as functions not components GET DATA
       action: Action,  // use as functions not components POST DATA
       children: [
-         { index: true, element: <Index /> },
+        { index: true, element: <Index /> },
         {
           path: "users/:contactId",
           element: <UserDetails />,
           loader: UserLoader,
           action: ActionFavourites,
         },
-          {
-        path: "contacts/:contactId/edit",
-        element:  <UserDetails />,
-        loader: UserLoader,
-        action: ActionUpdate,
-      },
-      {
-        path: "contacts/:contactId/destroy",
-        action: ActionDelete,
-        errorElement: <div>Oops! There was an error.</div>,
-      },
+        {
+          path: "contacts/:contactId/edit",
+          element: <UserDetails />,
+          loader: UserLoader,
+          action: ActionUpdate,
+        },
+        {
+          path: "contacts/:contactId/destroy",
+          action: ActionDelete,
+          errorElement: <div>Oops! There was an error.</div>,
+        },
       ],
     },
     {

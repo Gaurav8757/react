@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 export async function LoaderSearch({ request }) {
   const url = new URL(request.url);
+  console.log(url);
+  
   const q = url.searchParams.get("q");
   const users = await readDb(q);
   return { users, q };
@@ -12,6 +14,8 @@ export async function LoaderSearch({ request }) {
 
 function Sidebar() {
   const { users, q } = useLoaderData();
+  console.log(q);
+  
   const navigation = useNavigation();
    const submit = useSubmit();
   //  const {data, error, loading} = useAsync(()=> readDb(), []);
